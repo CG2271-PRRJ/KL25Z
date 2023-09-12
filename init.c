@@ -61,7 +61,7 @@ void initPWM()
 	SIM->SOPT2 &= ~SIM_SOPT2_TPMSRC_MASK;
 	SIM->SOPT2 |= SIM_SOPT2_TPMSRC(1); // MCGFLLCLK OR MCGPLLCLK/2
 
-	// set modulo value 48000000/128 = 375000, 375000Hz/(50Hz * 2) = 3750
+	// set modulo value 48000000/128 = 375000, 375000Hz/(50Hz * 2) = 3750 pwm phase correct
 	TPM1->MOD = MODVALUE;
 	TPM2->MOD = MODVALUE;
 
@@ -69,7 +69,7 @@ void initPWM()
 	TPM1->SC |= TPM_SC_CPWMS_MASK;
 	TPM2->SC |= TPM_SC_CPWMS_MASK;
 
-	// Set prescaler to 1 explicitly
+	// Set prescaler and counting mode
 	TPM1->SC &= ~((TPM_SC_PS_MASK) | (TPM_SC_CMOD_MASK));
 	TPM1->SC |= (TPM_SC_CMOD(1) | TPM_SC_PS(7));
 
@@ -122,8 +122,42 @@ void initLED(void)
 
 	PORTA->PCR[RED_LED_01] &= ~PORT_PCR_MUX_MASK;
 	PORTA->PCR[RED_LED_01] |= PORT_PCR_MUX(1);
+
+	// set data direction registers to output
+	PTA->PDDR |= (MASK(GREEN_LED_01) | MASK(GREEN_LED_02) | MASK(GREEN_LED_04) | MASK(GREEN_LED_05) | MASK(GREEN_LED_06) | MASK(RED_LED_01));
+
+	PTC->PDDR |= (MASK(GREEN_LED_07) | MASK(GREEN_LED_08) | MASK(GREEN_LED_09) | MASK(GREEN_LED_10));
+
+	PTD->PDDR |= (MASK(GREEN_LED_03) | MASK(0));
 }
 
 void initBUZZER(void)
 {
+	// Configure Mode 3 for PWM pin operation
+	PORTD->PCR[BUZZER_PIN] &= ~PORT_PCR_MUX_MASK;
+	PORTD->PCR[BUZZER_PIN] |= PORT_PCR_MUX(4);
+
+	// Enable clock gating for Timer0
+	SIM->SCGC6 |= (SIM_SCGC6_TPM0_MASK);
+
+	// Select clock for TPM module
+	SIM->SOPT2 &= ~SIM_SOPT2_TPMSRC_MASK;
+	SIM->SOPT2 |= SIM_SOPT2_TPMSRC(1); // MCGFLLCLK OR MCGPLLCLK/2
+
+	// set modulo value 48000000/128 = 375000, 375000Hz/(50Hz) = 7500 Edge aligned
+	TPM0->MOD = 3500;
+
+	// Set Edge aligned PWM mode
+	TPM0->SC |= (TPM_SC_CPWMS_MASK);
+
+	// Set prescaler and counting mode
+	TPM0->SC &= ~((TPM_SC_PS_MASK) | (TPM_SC_CMOD_MASK));
+	TPM0->SC |= (TPM_SC_CMOD(1) | TPM_SC_PS(7));
+
+	// enable PWM on the TPM and channel
+	TPM0_C5SC &= ~((TPM_CnSC_ELSB_MASK) | (TPM_CnSC_ELSA_MASK) | (TPM_CnSC_MSB_MASK) | (TPM_CnSC_MSA_MASK));
+	TPM0_C5SC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_MSB(1));
+
+	// off buzzer first
+	TPM0_C5V = 0;
 }
