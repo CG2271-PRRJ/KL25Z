@@ -65,6 +65,7 @@ int main(void)
 	initGPIO();
 	initPWM();
 	initLED();
+	initBUZZER();
 	initUART1(BAUD_RATE);
 
 	osKernelInitialize();

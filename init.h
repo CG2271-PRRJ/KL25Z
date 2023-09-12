@@ -36,5 +36,5 @@
 void initUART1(uint32_t baud);
 void initGPIO(void);
 void initPWM(void);
-// void initTimer();
+void initBUZZER(void);
 void initLED(void);
