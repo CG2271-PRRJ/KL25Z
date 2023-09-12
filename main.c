@@ -6,49 +6,86 @@
 #include "init.h"
 #include "motor_control.h"
 #include "audio.h"
+#include "led_control.h"
 #include "stdbool.h"
 
-osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer;
+osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
+
+// osMutexId_t redMutex;
 
 uint8_t rx_data = 112;
-volatile uint8_t rx_data_old = 112;
-
-volatile uint32_t prev_time = 0;
-
-// static void delay(volatile uint32_t nof)
-// {
-// 	while (nof != 0)
-// 	{
-// 		__asm("NOP");
-// 		nof--;
-// 	}
-// }
-
-void delay(long time)
-{
-	long current_time = 0;
-	while (current_time - time < 0)
-	{
-		current_time++;
-	}
-}
 
 void UART1_IRQHandler(void)
 {
 	NVIC_ClearPendingIRQ(UART1_IRQn);
-	//__disable_irq();
+
 	if (UART1->S1 & UART_S1_TDRE_MASK)
 	{
 		rx_data = UART1->D;
 	}
-	if (rx_data_old != rx_data)
-	{
-		osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
-		rx_data_old = rx_data;
-	}
+
+	osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
 
 	PORTE->ISFR = 0xffffffff;
-	//__enable_irq();
+}
+
+void tRedLED(void *argument)
+{
+	uint8_t isStopped = 1;
+	uint32_t prevTime = 0;
+	uint16_t delay = 250;
+	for (;;)
+	{
+		osMessageQueueGet(msgRedLED, &isStopped, NULL, 0);
+
+		if (isStopped)
+		{
+			delay = 250;
+		}
+		else
+		{
+			delay = 500;
+		}
+		if (osKernelGetTickCount() - prevTime > delay)
+		{
+			blinkRedLED(); // 250ms
+			prevTime = osKernelGetTickCount();
+		}
+	}
+}
+
+void tGreenLED(void *argument)
+{
+	uint8_t isStopped = 1;
+	uint32_t prevTime = 0;
+	uint16_t delay = 0;
+	int i = 0;
+	for (;;)
+	{
+		osMessageQueueGet(msgGreenLED, &isStopped, NULL, 0);
+		if (isStopped)
+		{
+			delay = 0;
+		}
+		else
+		{
+			delay = 100;
+		}
+
+		if (osKernelGetTickCount() - prevTime > delay)
+		{
+			if (isStopped)
+			{
+				setGreenLED(true);
+			}
+			else
+			{
+				i = i > 9 ? 0 : i + 1;
+				cycleGreenLED(i);
+			}
+			prevTime = osKernelGetTickCount();
+		}
+	}
 }
 
 void tMotorControl(void *argument)
@@ -71,18 +108,24 @@ void tMotorControl(void *argument)
 void tBuzzer(void *argument)
 {
 	uint8_t isAlt = 0;
+	uint32_t prevTime = 0;
+	uint16_t delay = 10;
 
 	// 375000Hz/(50Hz) = MOD
 	for (;;)
 	{
 		osMessageQueueGet(msgBuzzer, &isAlt, NULL, 0);
-		if (!isAlt)
+		if (osKernelGetTickCount() - prevTime > delay)
 		{
-			stopNote();
-		}
-		else if (isAlt)
-		{
-			changeNote(NOTE_F5);
+			if (!isAlt)
+			{
+				stopNote();
+			}
+			else if (isAlt)
+			{
+				delay = changeNoteAlt();
+			}
+			prevTime = osKernelGetTickCount();
 		}
 	}
 }
@@ -114,6 +157,8 @@ void tBrain(void *argument)
 
 		osMessageQueuePut(msgMotorControl, &rx, NULL, osWaitForever);
 		osMessageQueuePut(msgBuzzer, &isAlt, NULL, osWaitForever);
+		osMessageQueuePut(msgGreenLED, &isStopped, NULL, osWaitForever);
+		osMessageQueuePut(msgRedLED, &isStopped, NULL, osWaitForever);
 	}
 }
 
@@ -121,15 +166,23 @@ int main(void)
 {
 	SystemCoreClockUpdate();
 	initGPIO();
+	initLED();
 	initPWM();
 	initUART1(BAUD_RATE);
 	initBUZZER();
-	initLED();
 
 	osKernelInitialize();
 
+	// osMutexNew(redMutex);
+
 	osThreadNew(tBrain, NULL, NULL);
 	msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+
+	osThreadNew(tRedLED, NULL, NULL);
+	msgRedLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+
+	osThreadNew(tGreenLED, NULL, NULL);
+	msgGreenLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
 
 	osThreadNew(tMotorControl, NULL, NULL);
 	msgMotorControl = osMessageQueueNew(1, sizeof(uint8_t), NULL);
