@@ -37,4 +37,4 @@ void initUART1(uint32_t baud);
 void initGPIO(void);
 void initPWM(void);
 // void initTimer();
-void initLED();
+void initLED(void);
