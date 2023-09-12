@@ -14,16 +14,13 @@
 #define GREEN_LED_09 7  // PortC Pin 7
 #define GREEN_LED_10 0  // PortC Pin 0
 
-
-#define RED_LED_01  13  // PortA Pin 13
-
+#define RED_LED_01 13 // PortA Pin 13
 
 // UART control
 #define BAUD_RATE 9600
-#define UART_TX_PORTE0 0 //PTE0 UART1TX
-#define UART_RX_PORTE1 1 //PTE1 UART1RX
-#define UART1_INT_PRIO 128 //UART PRIORITY
-
+#define UART_TX_PORTE0 0   // PTE0 UART1TX
+#define UART_RX_PORTE1 1   // PTE1 UART1RX
+#define UART1_INT_PRIO 128 // UART PRIORITY
 
 // MOTOR control
 #define LEFT_FWD 20   // TPM1_CH0   PTE_20
@@ -32,14 +29,12 @@
 #define RIGHT_BACK 23 // TPM2_CH1   PTE_23
 #define MODVALUE 3750
 
-
 // Buzzer Control
 #define BUZZER_PIN 5 // TPM0_CH5   PTD5
-
 
 // Declare funcs
 void initUART1(uint32_t baud);
 void initGPIO(void);
 void initPWM(void);
-//void initTimer();
-//void initLED();
+// void initTimer();
+void initLED();

@@ -2,9 +2,7 @@
 #include CMSIS_device_header
 #include "cmsis_os2.h"
 
-
-
-#include "MKL25Z4.h"                    // Device header
+#include "MKL25Z4.h" // Device header
 #include "init.h"
 #include "motor_control.h"
 
@@ -24,13 +22,13 @@ void UART1_IRQHandler(void)
 	{
 		rx_data = UART1->D;
 	}
-	//counter++;
-	if (rx_data_old != rx_data) {
+	// counter++;
+	if (rx_data_old != rx_data)
+	{
 		osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
 		rx_data_old = rx_data;
 	}
-	
-	
+
 	PORTE->ISFR = 0xffffffff;
 	//__enable_irq();
 }
@@ -41,14 +39,16 @@ void tMotorControl(void *argument)
 	for (;;)
 	{
 		osMessageQueueGet(msgMotorControl, &rx, NULL, 0);
-		if (rx == 112) {
+		if (rx == 112)
+		{
 			stop();
-		} else if (rx < 225) {
+		}
+		else if (rx < 225)
+		{
 			move(rx);
 		}
 	}
 }
-
 
 void tBrain(void *argument)
 {
@@ -59,27 +59,24 @@ void tBrain(void *argument)
 	}
 }
 
-
-
 int main(void)
 {
 	SystemCoreClockUpdate();
 	initGPIO();
 	initPWM();
+	initLED();
 	initUART1(BAUD_RATE);
-	
+
 	osKernelInitialize();
-	
+
 	osThreadNew(tBrain, NULL, NULL);
 	msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
-	
+
 	osThreadNew(tMotorControl, NULL, NULL);
 	msgMotorControl = osMessageQueueNew(1, sizeof(uint8_t), NULL);
-	
-	
+
 	osKernelStart();
-	
-	
+
 	for (;;)
 	{
 	}
