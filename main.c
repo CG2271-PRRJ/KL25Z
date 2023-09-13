@@ -110,6 +110,7 @@ void tBuzzer(void *argument)
 	uint8_t isAlt = 0;
 	uint32_t prevTime = 0;
 	uint16_t delay = 10;
+	bool isplaying = false;
 
 	// 375000Hz/(50Hz) = MOD
 	for (;;)
@@ -117,14 +118,25 @@ void tBuzzer(void *argument)
 		osMessageQueueGet(msgBuzzer, &isAlt, NULL, 0);
 		if (osKernelGetTickCount() - prevTime > delay)
 		{
-			if (!isAlt)
+			if (!isplaying)
 			{
+				if (!isAlt)
+				{
+					stopNote();
+				}
+				else if (isAlt)
+				{
+					delay = changeNoteAlt();
+				}
+				isplaying = true;
+			}
+			else
+			{
+				isplaying = false;
+				delay = 10;
 				stopNote();
 			}
-			else if (isAlt)
-			{
-				delay = changeNoteAlt();
-			}
+
 			prevTime = osKernelGetTickCount();
 		}
 	}
@@ -165,11 +177,14 @@ void tBrain(void *argument)
 int main(void)
 {
 	SystemCoreClockUpdate();
+	// disable interrupts here
+	//__disable_irq();
+
 	initGPIO();
 	initLED();
 	initPWM();
-	initUART1(BAUD_RATE);
 	initBUZZER();
+	initUART1(BAUD_RATE);
 
 	osKernelInitialize();
 
@@ -189,6 +204,8 @@ int main(void)
 
 	osThreadNew(tBuzzer, NULL, NULL);
 	msgBuzzer = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+
+	//__enable_irq();
 
 	osKernelStart();
 
