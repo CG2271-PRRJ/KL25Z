@@ -352,15 +352,44 @@ int melody[] = {
 int durations[] = {
     16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 16, 16, 16, 16, 16, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 8, 8, 16, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, 15, 8, 8, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 1};
 
-// int melody[] = {
-//     NOTE_A5,
-//     NOTE_B5,
-//     NOTE_C6,
-//     NOTE_D6,
+// #define ONE_BEAT 350//320 // 175000//500000 (suitable for russian anthem)
+// #define TWO_BEAT ONE_BEAT * 2
+// #define FOUR_BEAT TWO_BEAT * 2
+// #define ONE_HALF_BEAT ONE_BEAT * 1.5
+// #define THREE_BEAT ONE_BEAT * 3
+// #define HALF_BEAT ONE_BEAT / 2
+// #define TRIPLET_BEAT ONE_BEAT / 3
+// #define QUARTER_BEAT HALF_BEAT / 2
+// #define SIXTH_BEAT HALF_BEAT / 3
+// #define EIGTH_BEAT QUARTER_BEAT/2
+// #define SIXTEENTH_BEAT EIGTH_BEAT/2
+// #define DOTTED_HALF_BEAT ONE_BEAT / 1.5
+// #define REST 0
+
+// #define DEJAVU_LEN 200
+// #define DEJAVU_SPEED 0.6
+
+// int dejavu[DEJAVU_LEN][2] = {
+// 	{REST, ONE_BEAT},{As6,HALF_BEAT},{As6,ONE_BEAT},{F6,ONE_BEAT},
+// 	{REST, ONE_BEAT},{As6,HALF_BEAT},{As6,ONE_BEAT},{F6,ONE_BEAT},
+// 	{REST, HALF_BEAT}, {As5, HALF_BEAT}, {D6,HALF_BEAT}, {As5, HALF_BEAT}, {D6, HALF_BEAT}, {As5, HALF_BEAT}, {D6, HALF_BEAT},
+// 	{Ds6, ONE_HALF_BEAT}, {REST, HALF_BEAT}, {G6, ONE_BEAT}, {F6, HALF_BEAT}, {Ds6, HALF_BEAT}, {D6, HALF_BEAT},
+// 	{REST, ONE_BEAT},{As6,HALF_BEAT},{As6,ONE_BEAT},{F6,ONE_BEAT},
+// 	{REST, ONE_BEAT}, {Ds5,HALF_BEAT}, {Ds5,HALF_BEAT}, {D5, HALF_BEAT}, {C5, HALF_BEAT}, {As4, ONE_BEAT},  //6
+// 	{C5, ONE_BEAT},{C5,HALF_BEAT},{F5,QUARTER_BEAT},{G5,QUARTER_BEAT},{C6,QUARTER_BEAT},{C6,QUARTER_BEAT},{F6,QUARTER_BEAT},{G6,QUARTER_BEAT},{C7,QUARTER_BEAT},{C7,QUARTER_BEAT},{F7,QUARTER_BEAT},{G7,QUARTER_BEAT},{C8,HALF_BEAT},
+// 	{REST, ONE_HALF_BEAT}, {REST,HALF_BEAT},{C6, HALF_BEAT}, {D6, HALF_BEAT}, {Ds6, ONE_HALF_BEAT},  //6
+// 	{Ds6, HALF_BEAT},{Ds6, HALF_BEAT},{Ds6, HALF_BEAT}, {As5, HALF_BEAT}, {G5, HALF_BEAT}, {As5, ONE_BEAT},  //6
+// 	{C6, HALF_BEAT}, {C6, ONE_BEAT}, {G6, HALF_BEAT}, {F6, HALF_BEAT}, {Ds6, HALF_BEAT}, {D6, HALF_BEAT}, //6
+// 	{Ds6,ONE_BEAT},{Ds6,HALF_BEAT},{Ds6,HALF_BEAT},{F6,HALF_BEAT},{Ds6,HALF_BEAT},{F6,HALF_BEAT},{F6,ONE_BEAT}, //7
+// 	{G6,HALF_BEAT},{G6,HALF_BEAT},{F6, ONE_BEAT},{C6,HALF_BEAT},{D6,HALF_BEAT},{Ds6,ONE_HALF_BEAT}, //6
+// 	{Ds6, HALF_BEAT},{Ds6, HALF_BEAT},{F6, HALF_BEAT},{D6, HALF_BEAT},{As5, HALF_BEAT},{As5,ONE_BEAT}, //6
+// 	{C6, HALF_BEAT},{C6,ONE_BEAT},{Ds6, HALF_BEAT},{D6, HALF_BEAT},{C6, HALF_BEAT},{As5, HALF_BEAT}, //6
+// 	{C6,ONE_BEAT},{Ds7, HALF_BEAT},{Ds7, HALF_BEAT},{F7, HALF_BEAT},{Ds7, HALF_BEAT},{F7, HALF_BEAT},{F7,ONE_BEAT}, //7
+// 	{G7, HALF_BEAT},{G7, HALF_BEAT},{F7,TWO_BEAT}, //3
+// 	{G7,HALF_BEAT},{REST,HALF_BEAT},{G7,HALF_BEAT},{REST,HALF_BEAT},{G7,HALF_BEAT},{G7,TWO_BEAT}, // 6
+// 	{REST, TWO_BEAT} // 1
 // };
 
-// int durations[] = {
-//     4, 4, 4, 4};
 void setNote(uint32_t freq)
 {
     if (freq == 0)
