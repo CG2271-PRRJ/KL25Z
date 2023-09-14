@@ -44,13 +44,13 @@ void changeLeft(uint8_t speed)
 {
 	if (speed > 7)
 	{
-		TPM1_C0V = getSpeed(speed);
-		TPM1_C1V = 0;
+		TPM2_C0V = 0;
+		TPM2_C1V = getSpeed(speed);
 	}
 	else
 	{
-		TPM1_C0V = 0;
-		TPM1_C1V = getSpeed(speed);
+		TPM2_C0V = getSpeed(speed);
+		TPM2_C1V = 0;
 	}
 }
 
@@ -58,13 +58,13 @@ void changeRight(uint8_t speed)
 {
 	if (speed > 7)
 	{
-		TPM2_C0V = getSpeed(speed);
-		TPM2_C1V = 0;
+		TPM1_C0V = 0;
+		TPM1_C1V = getSpeed(speed);
 	}
 	else
 	{
-		TPM2_C0V = 0;
-		TPM2_C1V = getSpeed(speed);
+		TPM1_C0V = getSpeed(speed);
+		TPM1_C1V = 0;
 	}
 }
 

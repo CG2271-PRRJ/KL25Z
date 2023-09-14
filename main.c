@@ -14,6 +14,7 @@ osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
 // osMutexId_t redMutex;
 
 uint8_t rx_data = 112;
+volatile uint8_t rx_data_old = 112;
 
 void UART1_IRQHandler(void)
 {
@@ -24,7 +25,11 @@ void UART1_IRQHandler(void)
 		rx_data = UART1->D;
 	}
 
-	osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
+	if (rx_data_old != rx_data)
+	{
+		osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
+		rx_data_old = rx_data;
+	}
 
 	PORTE->ISFR = 0xffffffff;
 }
@@ -122,7 +127,7 @@ void tBuzzer(void *argument)
 			{
 				if (!isAlt)
 				{
-					stopNote();
+					delay = changeNoteMain();
 				}
 				else if (isAlt)
 				{
