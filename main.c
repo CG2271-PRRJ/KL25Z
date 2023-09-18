@@ -127,11 +127,11 @@ void tBuzzer(void *argument)
 			{
 				if (!isAlt)
 				{
-					delay = changeNoteMain();
+					stopNote();
 				}
 				else if (isAlt)
 				{
-					delay = changeNoteAlt();
+					delay = changeNoteMain();
 				}
 				isplaying = true;
 			}
