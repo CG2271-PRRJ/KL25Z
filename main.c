@@ -20,7 +20,7 @@ void UART1_IRQHandler(void)
 {
 	NVIC_ClearPendingIRQ(UART1_IRQn);
 
-	if (UART1->S1 & UART_S1_TDRE_MASK)
+	if (UART1->S1 & UART_S1_RDRF_MASK)
 	{
 		rx_data = UART1->D;
 	}

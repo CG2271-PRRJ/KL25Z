@@ -19,6 +19,7 @@ void initUART1(uint32_t baud_rate)
 	PORTE->PCR[UART_RX_PORTE1] &= ~PORT_PCR_MUX_MASK;
 	PORTE->PCR[UART_RX_PORTE1] |= PORT_PCR_MUX(3);
 
+	// turn off transmit and recieve
 	UART1->C2 &= ~((UART_C2_TE_MASK) | (UART_C2_RE_MASK));
 
 	bus_clock = (DEFAULT_SYSTEM_CLOCK) / 2;
@@ -29,15 +30,18 @@ void initUART1(uint32_t baud_rate)
 	UART1->C1 = 0;
 	UART1->S2 = 0;
 	UART1->C3 = 0;
-
-	UART1->C2 &= ~(UART_C2_TE_MASK); // changed this
+	
+	// enable receieve for serial
 	UART1->C2 |= (UART_C2_RE_MASK);
 
 	// config for interrupt
+	// turn off transmit and recieve interrupt
 	UART1->C2 &= ~(UART_C2_RIE_MASK | UART_C2_TIE_MASK); // changed this
 	NVIC_SetPriority(UART1_IRQn, 1);
 	NVIC_ClearPendingIRQ(UART1_IRQn);
 	NVIC_EnableIRQ(UART1_IRQn);
+	
+	// turn on recieve interrupt
 	UART1->C2 |= (UART_C2_RIE_MASK);
 }
 
