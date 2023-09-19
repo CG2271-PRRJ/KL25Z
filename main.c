@@ -14,7 +14,7 @@ osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
 // osMutexId_t redMutex;
 
 uint8_t rx_data = 112;
-volatile uint8_t rx_data_old = 112;
+uint8_t rx_data_old = 112;
 
 void UART1_IRQHandler(void)
 {
