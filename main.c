@@ -25,11 +25,11 @@ void UART1_IRQHandler(void)
 		rx_data = UART1->D;
 	}
 
-	if (rx_data_old != rx_data)
-	{
-		osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
-		rx_data_old = rx_data;
-	}
+	// if (rx_data_old != rx_data)
+	// {
+	osMessageQueuePut(msgBrain, &rx_data, NULL, 0); // maybe need to check for different data first
+	// 	rx_data_old = rx_data;
+	// }
 
 	PORTE->ISFR = 0xffffffff;
 }
@@ -98,7 +98,7 @@ void tMotorControl(void *argument)
 	uint8_t rx = 112;
 	for (;;)
 	{
-		osMessageQueueGet(msgMotorControl, &rx, NULL, 0);
+		osMessageQueueGet(msgMotorControl, &rx, NULL, 0); // maybe need os wait forever here?
 		if (rx == 112)
 		{
 			stop();
@@ -173,9 +173,9 @@ void tBrain(void *argument)
 		}
 
 		osMessageQueuePut(msgMotorControl, &rx, NULL, osWaitForever);
-		osMessageQueuePut(msgBuzzer, &isAlt, NULL, osWaitForever);
-		osMessageQueuePut(msgGreenLED, &isStopped, NULL, osWaitForever);
-		osMessageQueuePut(msgRedLED, &isStopped, NULL, osWaitForever);
+		osMessageQueuePut(msgBuzzer, &isAlt, NULL, 0);
+		osMessageQueuePut(msgGreenLED, &isStopped, NULL, 0);
+		osMessageQueuePut(msgRedLED, &isStopped, NULL, 0);
 	}
 }
 
