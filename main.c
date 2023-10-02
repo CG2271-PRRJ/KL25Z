@@ -9,7 +9,7 @@
 #include "led_control.h"
 #include "stdbool.h"
 
-osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
+osMessageQueueId_t msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
 
 // osMutexId_t redMutex;
 
@@ -189,7 +189,7 @@ int main(void)
 	// osMutexNew(redMutex);
 
 	osThreadNew(tBrain, NULL, NULL);
-	msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	// msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
 
 	osThreadNew(tRedLED, NULL, NULL);
 	msgRedLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
