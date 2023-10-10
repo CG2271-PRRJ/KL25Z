@@ -9,11 +9,19 @@
 #include "led_control.h"
 #include "stdbool.h"
 
-osMessageQueueId_t msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
+osMessageQueueId_t msgBrain, msgMotorControl, msgBuzzer, msgGreenLED, msgRedLED;
+osSemaphoreId_t brainSem;
+osSemaphoreId_t motorSem;
 
 // osMutexId_t redMutex;
 
-volatile uint8_t rx_data = 112;
+const osThreadAttr_t priorityMax = {
+	.priority = osPriorityRealtime};
+
+const osThreadAttr_t priorityHigh = {
+	.priority = osPriorityHigh};
+
+uint8_t rx_data = 112;
 
 void UART1_IRQHandler(void)
 {
@@ -24,13 +32,15 @@ void UART1_IRQHandler(void)
 		rx_data = UART1->D;
 	}
 
+	osMessageQueuePut(msgBrain, &rx_data, NULL, 0);
+	osSemaphoreRelease(brainSem);
+
 	PORTE->ISFR = 0xffffffff;
 }
 
 void tRedLED(void *argument)
 {
 	uint8_t isStopped = 1;
-	uint32_t prevTime = 0;
 	uint16_t delay = 250;
 	for (;;)
 	{
@@ -44,45 +54,29 @@ void tRedLED(void *argument)
 		{
 			delay = 500;
 		}
-		if (osKernelGetTickCount() - prevTime > delay)
-		{
-			blinkRedLED(); // 250ms
-			prevTime = osKernelGetTickCount();
-		}
+		blinkRedLED(); // 250ms
+		osDelay(delay);
 	}
 }
 
 void tGreenLED(void *argument)
 {
 	uint8_t isStopped = 1;
-	uint32_t prevTime = 0;
-	uint16_t delay = 0;
 	int i = 0;
 	for (;;)
 	{
 		osMessageQueueGet(msgGreenLED, &isStopped, NULL, 0);
+
 		if (isStopped)
 		{
-			delay = 0;
+			setGreenLED(true);
 		}
 		else
 		{
-			delay = 100;
+			i = i > 9 ? 0 : i + 1;
+			cycleGreenLED(i);
 		}
-
-		if (osKernelGetTickCount() - prevTime > delay)
-		{
-			if (isStopped)
-			{
-				setGreenLED(true);
-			}
-			else
-			{
-				i = i > 9 ? 0 : i + 1;
-				cycleGreenLED(i);
-			}
-			prevTime = osKernelGetTickCount();
-		}
+		osDelay(100);
 	}
 }
 
@@ -91,6 +85,7 @@ void tMotorControl(void *argument)
 	uint8_t rx = 112;
 	for (;;)
 	{
+		osSemaphoreAcquire(motorSem, osWaitForever);
 		osMessageQueueGet(msgMotorControl, &rx, NULL, 0); // maybe need os wait forever here?
 		if (rx == 112)
 		{
@@ -106,36 +101,29 @@ void tMotorControl(void *argument)
 void tBuzzer(void *argument)
 {
 	uint8_t isAlt = 0;
-	uint32_t prevTime = 0;
-	uint16_t delay = 10;
 	bool isplaying = false;
 
 	// 375000Hz/(50Hz) = MOD
 	for (;;)
 	{
 		osMessageQueueGet(msgBuzzer, &isAlt, NULL, 0);
-		if (osKernelGetTickCount() - prevTime > delay)
+		if (!isplaying)
 		{
-			if (!isplaying)
+			if (!isAlt)
 			{
-				if (!isAlt)
-				{
-					stopNote();
-				}
-				else if (isAlt)
-				{
-					delay = changeNoteMain();
-				}
-				isplaying = true;
-			}
-			else
-			{
-				isplaying = false;
-				delay = 10;
 				stopNote();
 			}
-
-			prevTime = osKernelGetTickCount();
+			else if (isAlt)
+			{
+				changeNoteMain();
+			}
+			isplaying = true;
+		}
+		else
+		{
+			isplaying = false;
+			osDelay(10);
+			stopNote();
 		}
 	}
 }
@@ -147,7 +135,8 @@ void tBrain(void *argument)
 	uint8_t isAlt = 0;
 	for (;;)
 	{
-		rx = rx_data;
+		osSemaphoreAcquire(brainSem, osWaitForever);
+		osMessageQueueGet(msgBrain, &rx, NULL, 0);
 		if (rx == 112)
 		{
 			isStopped = 1;
@@ -165,10 +154,11 @@ void tBrain(void *argument)
 			isAlt = 1;
 		}
 
-		osMessageQueuePut(msgMotorControl, &rx, NULL, osWaitForever);
+		osMessageQueuePut(msgMotorControl, &rx, NULL, 0);
 		osMessageQueuePut(msgBuzzer, &isAlt, NULL, 0);
 		osMessageQueuePut(msgGreenLED, &isStopped, NULL, 0);
 		osMessageQueuePut(msgRedLED, &isStopped, NULL, 0);
+		osSemaphoreRelease(motorSem);
 	}
 }
 
@@ -185,20 +175,22 @@ int main(void)
 	initUART1(BAUD_RATE);
 
 	osKernelInitialize();
+	brainSem = osSemaphoreNew(1, 0, NULL);
+	motorSem = osSemaphoreNew(1, 0, NULL);
 
 	// osMutexNew(redMutex);
 
-	osThreadNew(tBrain, NULL, NULL);
-	// msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	osThreadNew(tBrain, NULL, &priorityMax);
+	msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+
+	osThreadNew(tMotorControl, NULL, &priorityHigh);
+	msgMotorControl = osMessageQueueNew(1, sizeof(uint8_t), NULL);
 
 	osThreadNew(tRedLED, NULL, NULL);
 	msgRedLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
 
 	osThreadNew(tGreenLED, NULL, NULL);
 	msgGreenLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
-
-	osThreadNew(tMotorControl, NULL, NULL);
-	msgMotorControl = osMessageQueueNew(1, sizeof(uint8_t), NULL);
 
 	osThreadNew(tBuzzer, NULL, NULL);
 	msgBuzzer = osMessageQueueNew(1, sizeof(uint8_t), NULL);

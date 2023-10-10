@@ -447,9 +447,11 @@ void setNote(uint32_t freq)
 void stopNote(void)
 {
     TPM0_C5V = 0;
+    osDelay(50);
+    return;
 }
 
-uint16_t changeNoteAlt(void)
+void changeNoteAlt(void)
 {
     setNote(dejavu[currNoteAlt][0]);
 
@@ -458,10 +460,11 @@ uint16_t changeNoteAlt(void)
     uint16_t delay = (uint16_t)((double)(TEMPO / note_length) * 0.9);
 
     currNoteAlt = (currNoteAlt + 1) % DEJAVU_LEN;
-    return delay;
+    osDelay(delay);
+    return;
 }
 
-uint16_t changeNoteMain(void)
+void changeNoteMain(void)
 {
     setNote(melody[currNoteMain]);
 
@@ -470,5 +473,6 @@ uint16_t changeNoteMain(void)
     uint16_t delay = (uint16_t)((double)(TEMPO / note_length) * 1.45);
 
     currNoteMain = (currNoteMain + 1) % (sizeof(melody) / sizeof(int));
-    return delay;
+    osDelay(delay);
+    return;
 }

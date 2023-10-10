@@ -196,6 +196,6 @@
 extern volatile int currNoteAlt;
 extern volatile int currNoteMain;
 
-uint16_t changeNoteAlt(void);
-uint16_t changeNoteMain(void);
+void changeNoteAlt(void);
+void changeNoteMain(void);
 void stopNote(void);
