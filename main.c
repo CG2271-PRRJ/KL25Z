@@ -1,8 +1,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
-#include "cmsis_os2.h"
+//#include "cmsis_os2.h"
 
-#include "MKL25Z4.h" // Device header
+//#include "MKL25Z4.h" // Device header
 #include "init.h"
 #include "motor_control.h"
 #include "audio.h"
