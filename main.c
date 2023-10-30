@@ -189,19 +189,19 @@ int main(void)
 	// osMutexNew(redMutex);
 
 	osThreadNew(tBrain, NULL, &priorityMax);
-	msgBrain = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	msgBrain = osMessageQueueNew(2, sizeof(uint8_t), NULL);
 
 	osThreadNew(tMotorControl, NULL, &priorityHigh);
-	msgMotorControl = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	msgMotorControl = osMessageQueueNew(2, sizeof(uint8_t), NULL);
 
 	osThreadNew(tRedLED, NULL, NULL);
-	msgRedLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	msgRedLED = osMessageQueueNew(2, sizeof(uint8_t), NULL);
 
 	osThreadNew(tGreenLED, NULL, NULL);
-	msgGreenLED = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	msgGreenLED = osMessageQueueNew(2, sizeof(uint8_t), NULL);
 
 	osThreadNew(tBuzzer, NULL, NULL);
-	msgBuzzer = osMessageQueueNew(1, sizeof(uint8_t), NULL);
+	msgBuzzer = osMessageQueueNew(2, sizeof(uint8_t), NULL);
 
 	//__enable_irq();
 
