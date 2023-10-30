@@ -353,85 +353,6 @@ int melody[] = {
 int durations[] = {
     16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 16, 16, 16, 16, 16, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 8, 8, 16, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, 15, 8, 8, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 1};
 
-#define DEJAVU_LEN 200
-#define DEJAVU_SPEED 0.6
-
-int dejavu[DEJAVU_LEN][2] = {
-    {REST, ONE_BEAT}, {AS6, HALF_BEAT}, {AS6, ONE_BEAT}, {F6, ONE_BEAT}, {REST, ONE_BEAT}, {AS6, HALF_BEAT}, {AS6, ONE_BEAT}, {F6, ONE_BEAT}, {REST, HALF_BEAT}, {AS5, HALF_BEAT}, {D6, HALF_BEAT}, {AS5, HALF_BEAT}, {D6, HALF_BEAT}, {AS5, HALF_BEAT}, {D6, HALF_BEAT}, {DS6, ONE_HALF_BEAT}, {REST, HALF_BEAT}, {G6, ONE_BEAT}, {F6, HALF_BEAT}, {DS6, HALF_BEAT}, {D6, HALF_BEAT}, {REST, ONE_BEAT}, {AS6, HALF_BEAT}, {AS6, ONE_BEAT}, {F6, ONE_BEAT}, {REST, ONE_BEAT}, {DS5, HALF_BEAT}, {DS5, HALF_BEAT}, {D5, HALF_BEAT}, {C5, HALF_BEAT}, {AS4, ONE_BEAT}, // 6
-    {C5, ONE_BEAT},
-    {C5, HALF_BEAT},
-    {F5, QUARTER_BEAT},
-    {G5, QUARTER_BEAT},
-    {C6, QUARTER_BEAT},
-    {C6, QUARTER_BEAT},
-    {F6, QUARTER_BEAT},
-    {G6, QUARTER_BEAT},
-    {C7, QUARTER_BEAT},
-    {C7, QUARTER_BEAT},
-    {F7, QUARTER_BEAT},
-    {G7, QUARTER_BEAT},
-    {C8, HALF_BEAT},
-    {REST, ONE_HALF_BEAT},
-    {REST, HALF_BEAT},
-    {C6, HALF_BEAT},
-    {D6, HALF_BEAT},
-    {DS6, ONE_HALF_BEAT}, // 6
-    {DS6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {AS5, HALF_BEAT},
-    {G5, HALF_BEAT},
-    {AS5, ONE_BEAT}, // 6
-    {C6, HALF_BEAT},
-    {C6, ONE_BEAT},
-    {G6, HALF_BEAT},
-    {F6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {D6, HALF_BEAT}, // 6
-    {DS6, ONE_BEAT},
-    {DS6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {F6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {F6, HALF_BEAT},
-    {F6, ONE_BEAT}, // 7
-    {G6, HALF_BEAT},
-    {G6, HALF_BEAT},
-    {F6, ONE_BEAT},
-    {C6, HALF_BEAT},
-    {D6, HALF_BEAT},
-    {DS6, ONE_HALF_BEAT}, // 6
-    {DS6, HALF_BEAT},
-    {DS6, HALF_BEAT},
-    {F6, HALF_BEAT},
-    {D6, HALF_BEAT},
-    {AS5, HALF_BEAT},
-    {AS5, ONE_BEAT}, // 6
-    {C6, HALF_BEAT},
-    {C6, ONE_BEAT},
-    {DS6, HALF_BEAT},
-    {D6, HALF_BEAT},
-    {C6, HALF_BEAT},
-    {AS5, HALF_BEAT}, // 6
-    {C6, ONE_BEAT},
-    {DS7, HALF_BEAT},
-    {DS7, HALF_BEAT},
-    {F7, HALF_BEAT},
-    {DS7, HALF_BEAT},
-    {F7, HALF_BEAT},
-    {F7, ONE_BEAT}, // 7
-    {G7, HALF_BEAT},
-    {G7, HALF_BEAT},
-    {F7, TWO_BEAT}, // 3
-    {G7, HALF_BEAT},
-    {REST, HALF_BEAT},
-    {G7, HALF_BEAT},
-    {REST, HALF_BEAT},
-    {G7, HALF_BEAT},
-    {G7, TWO_BEAT},  // 6
-    {REST, TWO_BEAT} // 1
-};
-
 void setNote(uint32_t freq)
 {
     if (freq == 0)
@@ -451,19 +372,6 @@ void stopNote(void)
     return;
 }
 
-void changeNoteAlt(void)
-{
-    setNote(dejavu[currNoteAlt][0]);
-
-    // calculate delay bASed on tempo and note length
-    uint16_t note_length = dejavu[currNoteAlt][1];
-    uint16_t delay = (uint16_t)((double)(TEMPO / note_length) * 0.9);
-
-    currNoteAlt = (currNoteAlt + 1) % DEJAVU_LEN;
-    osDelay(delay);
-    return;
-}
-
 void changeNoteMain(void)
 {
     setNote(melody[currNoteMain]);
@@ -473,6 +381,68 @@ void changeNoteMain(void)
     uint16_t delay = (uint16_t)((double)(TEMPO / note_length) * 1.45);
 
     currNoteMain = (currNoteMain + 1) % (sizeof(melody) / sizeof(int));
+    osDelay(delay);
+    return;
+}
+
+// Track 0 - Piano
+// const int Notes_alt[] = {
+//     G5, A3, A3, A5, 0, B5, 0, CS6, 0,
+//     G5, A4, A4, A5, 0, B5, 0, CS6, 0,
+//     GS5, AS3, AS3, AS5, 0, C6, 0, D6, 0,
+//     GS5, AS4, AS4, AS5, 0, C6, 0, D6, 0,
+//     A5, B3, B3, B5, 0, CS6, 0, DS6, 0,
+//     A5, B4, B4, B5, 0, CS6, 0, DS6, 0,
+//     AS5, C4, C4, C6, 0, D6, 0, E6, 0,
+//     AS5, C5, C5, C6, 0, D6, 0, E6, 0,
+//     B5, CS4, CS4, CS6, 0, DS6, 0, F6, 0,
+//     C6, D4, D4, D6, 0, E6, 0, FS6, 0,
+//     CS6, DS4, DS4, DS6, 0, F6, 0, G6, 0,
+//     D6, E4, E4, E6, 0, FS6, 0, GS6, 0,
+//     A5, F4, C5, C5, 0, AS5, DS4, CS5, CS5, 0,
+//     B5, G4, D5, D5, 0, C6, GS4, DS5, DS5, 0};
+
+const int Notes_alt[] = {
+    G6, A4, A4, A6, 0, B6, 0, CS7, 0,
+    G6, A5, A5, A6, 0, B6, 0, CS7, 0,
+    GS6, AS4, AS4, AS6, 0, C7, 0, D7, 0,
+    GS6, AS5, AS5, AS6, 0, C7, 0, D7, 0,
+    A6, B4, B4, B6, 0, CS7, 0, DS7, 0,
+    A6, B5, B5, B6, 0, CS7, 0, DS7, 0,
+    AS6, C5, C5, C7, 0, D7, 0, E7, 0,
+    AS6, C6, C6, C7, 0, D7, 0, E7, 0,
+    B6, CS5, CS5, CS7, 0, DS7, 0, F7, 0,
+    C7, D5, D5, D7, 0, E7, 0, FS7, 0,
+    CS7, DS5, DS5, DS7, 0, F7, 0, G7, 0,
+    D7, E5, E5, E7, 0, FS7, 0, GS7, 0,
+    A6, F5, C6, C6, 0, AS6, DS5, CS6, CS6, 0,
+    B6, G5, D6, D6, 0, C7, GS5, DS6, DS6, 0};
+
+const uint16_t Durations_alt[] = {
+    0, 255, 32, 29, 220, 29, 220, 29, 230,
+    0, 255, 3, 29, 218, 29, 219, 29, 233,
+    0, 255, 8, 29, 218, 29, 219, 29, 228,
+    0, 255, 2, 29, 219, 29, 219, 29, 234,
+    0, 255, 38, 29, 220, 29, 220, 29, 230,
+    0, 255, 3, 29, 218, 29, 219, 29, 233,
+    0, 255, 8, 29, 218, 29, 219, 29, 228,
+    0, 255, 2, 29, 219, 29, 219, 29, 234,
+    0, 255, 38, 29, 220, 29, 220, 29, 230,
+    0, 255, 3, 29, 218, 29, 219, 29, 233,
+    0, 255, 8, 29, 218, 29, 219, 29, 228,
+    0, 255, 2, 29, 219, 29, 219, 29, 255,
+    0, 0, 255, 224, 31, 0, 0, 255, 219, 31,
+    0, 0, 255, 219, 31, 0, 0, 255, 116, 105};
+
+static const int ALT_LENGTH = sizeof(Notes_alt) / sizeof(int);
+
+void changeNoteAlt(void)
+{
+    setNote(Notes_alt[currNoteAlt]);
+
+    // calculate delay bASed on tempo and note length
+    uint16_t delay = (Durations_alt[currNoteAlt]) * 0.06;
+    currNoteAlt = (currNoteAlt + 1) % ALT_LENGTH;
     osDelay(delay);
     return;
 }

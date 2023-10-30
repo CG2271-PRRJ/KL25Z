@@ -1,8 +1,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
-//#include "cmsis_os2.h"
+// #include "cmsis_os2.h"
 
-//#include "MKL25Z4.h" // Device header
+// #include "MKL25Z4.h" // Device header
 #include "init.h"
 #include "motor_control.h"
 #include "audio.h"
@@ -109,13 +109,17 @@ void tBuzzer(void *argument)
 		osMessageQueueGet(msgBuzzer, &isAlt, NULL, 0);
 		if (!isplaying)
 		{
-			if (!isAlt)
+			if (isAlt == 0)
 			{
 				stopNote();
 			}
-			else if (isAlt)
+			else if (isAlt == 1)
 			{
 				changeNoteMain();
+			}
+			else if (isAlt == 2)
+			{
+				changeNoteAlt();
 			}
 			isplaying = true;
 		}
@@ -153,12 +157,16 @@ void tBrain(void *argument)
 		{
 			isAlt = 1;
 		}
+		else if (rx == 227)
+		{
+			isAlt = 2;
+		}
 
 		osMessageQueuePut(msgMotorControl, &rx, NULL, 0);
+		osSemaphoreRelease(motorSem);
 		osMessageQueuePut(msgBuzzer, &isAlt, NULL, 0);
 		osMessageQueuePut(msgGreenLED, &isStopped, NULL, 0);
 		osMessageQueuePut(msgRedLED, &isStopped, NULL, 0);
-		osSemaphoreRelease(motorSem);
 	}
 }
 
